@@ -519,8 +519,15 @@ body.mode-empresa .lock-dot.filled{background:var(--e-gold);border-color:var(--e
       </div>
       <div class="nav-grp-label">💰 Financeiro</div>
       <div class="nav-item" id="nav-lancamentos" onclick="go('lancamentos')">
-        <span class="nav-icon">◈</span> Lançamentos
+        <span class="nav-icon">◈</span> Gastos do Dia a Dia
         <span class="nav-badge hidden" id="badge-lanc">0</span>
+      </div>
+      <div class="nav-item" id="nav-boletos" onclick="go('boletos')">
+        <span class="nav-icon">📄</span> Boletos & Contas
+        <span class="nav-badge hidden" id="badge-boletos">0</span>
+      </div>
+      <div class="nav-item" id="nav-emprestimos" onclick="go('emprestimos')">
+        <span class="nav-icon">🏦</span> Empréstimos
       </div>
       <div class="nav-item" id="nav-cartoes" onclick="go('cartoes')">
         <span class="nav-icon">▣</span> Cartões & Parcelas
@@ -539,9 +546,6 @@ body.mode-empresa .lock-dot.filled{background:var(--e-gold);border-color:var(--e
       </div>
       <div class="nav-item hidden" id="nav-fornecedores" onclick="go('fornecedores')">
         <span class="nav-icon">◎</span> Fornecedores
-      </div>
-      <div class="nav-item hidden" id="nav-emprestimos" onclick="go('emprestimos')">
-        <span class="nav-icon">⊕</span> Empréstimos PJ
       </div>
 
       <div class="nav-grp-label">📊 Análises</div>
@@ -608,44 +612,56 @@ body.mode-empresa .lock-dot.filled{background:var(--e-gold);border-color:var(--e
             <div class="chart-wrap h200"><canvas id="chart-cats"></canvas></div>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
           <div class="section">
             <div class="section-head">
-              <span class="section-title">⚠ Alertas da IA</span>
+              <span class="section-title">⚠ Alertas & Vencimentos</span>
               <span class="badge bg-red" id="badge-alerta-count">0</span>
             </div>
             <div class="section-body" id="home-alertas"></div>
           </div>
-          <div class="section" id="home-gauge-section">
+          <div class="section">
             <div class="section-head">
-              <span class="section-title">🎯 Teto de Compras</span>
-              <button class="btn btn-xs" onclick="openModal('modal-teto')">Configurar</button>
+              <span class="section-title">📄 Boletos do Mês</span>
+              <button class="btn btn-xs btn-ghost" onclick="go('boletos')">Ver todos →</button>
             </div>
-            <div class="section-body">
-              <div class="gauge-wrap">
-                <canvas id="gauge-chart" class="gauge-canvas" height="150" width="260"></canvas>
-                <div class="gauge-center">
-                  <div class="gauge-value" id="gauge-pct">0%</div>
-                  <div class="gauge-label">do teto</div>
-                </div>
+            <div class="section-body" style="padding:14px">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px" id="home-boletos-kpi"></div>
+              <div class="chart-wrap h140"><canvas id="chart-home-boletos"></canvas></div>
+            </div>
+          </div>
+        </div>
+        <div class="section" id="home-gauge-section" style="display:none">
+          <div class="section-head">
+            <span class="section-title">🎯 Teto de Compras</span>
+            <button class="btn btn-xs" onclick="openModal('modal-teto')">Configurar</button>
+          </div>
+          <div class="section-body">
+            <div class="gauge-wrap">
+              <canvas id="gauge-chart" class="gauge-canvas" height="150" width="260"></canvas>
+              <div class="gauge-center">
+                <div class="gauge-value" id="gauge-pct">0%</div>
+                <div class="gauge-label">do teto</div>
               </div>
-              <div id="gauge-sub" style="text-align:center;margin-top:8px"></div>
             </div>
+            <div id="gauge-sub" style="text-align:center;margin-top:8px"></div>
           </div>
         </div>
       </div>
 
-      <!-- ====== LANÇAMENTOS ====== -->
+      <!-- ====== GASTOS DO DIA A DIA ====== -->
       <div class="page" id="page-lancamentos">
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
           <div class="tabs" style="margin-bottom:0">
             <button class="tab active" onclick="filtLanc('todos',this)">Todos</button>
             <button class="tab" onclick="filtLanc('receita',this)">Receitas</button>
             <button class="tab" onclick="filtLanc('despesa',this)">Despesas</button>
-            <button class="tab" onclick="filtLanc('parcelado',this)">Parcelados</button>
           </div>
           <select id="sel-mes-lanc" onchange="renderLancs()" style="width:auto;padding:6px 10px;font-size:12px"></select>
-          <button class="btn btn-sm btn-accent" onclick="openModal('modal-lanc')" style="margin-left:auto">+ Novo</button>
+          <button class="btn btn-sm btn-accent" onclick="openModal('modal-lanc')" style="margin-left:auto">+ Novo Gasto</button>
+        </div>
+        <div style="background:rgba(78,203,141,0.04);border:1px solid rgba(78,203,141,0.12);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--text2)">
+          💡 <strong style="color:var(--text)">Gastos do dia a dia</strong> são compras pagas na hora: supermercado, combustível, restaurante, etc. Para boletos com vencimento, use a aba <strong style="color:var(--accent);cursor:pointer" onclick="go('boletos')">📄 Boletos & Contas</strong>.
         </div>
         <div class="section">
           <div class="section-body-0 tbl-wrap">
@@ -654,35 +670,94 @@ body.mode-empresa .lock-dot.filled{background:var(--e-gold);border-color:var(--e
         </div>
       </div>
 
+      <!-- ====== BOLETOS & CONTAS ====== -->
+      <div class="page" id="page-boletos">
+        <!-- KPI Cards -->
+        <div class="cards-row" id="boletos-cards"></div>
+
+        <!-- Gráfico Rosca + Próximos vencimentos -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
+          <div class="chart-box">
+            <div class="chart-title">STATUS DOS BOLETOS — MÊS ATUAL</div>
+            <div class="chart-wrap h200"><canvas id="chart-boletos-status"></canvas></div>
+          </div>
+          <div class="section" style="margin-bottom:0">
+            <div class="section-head"><span class="section-title">🔔 Vencimentos Próximos (7 dias)</span></div>
+            <div class="section-body" id="boletos-proximos" style="padding:12px"></div>
+          </div>
+        </div>
+
+        <!-- Filtros e ação -->
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+          <div class="tabs" style="margin-bottom:0">
+            <button class="tab active" id="btab-todos"     onclick="filtBoleto('todos',this)">Todos</button>
+            <button class="tab"        id="btab-pendente"  onclick="filtBoleto('pendente',this)">⏳ Pendentes</button>
+            <button class="tab"        id="btab-atrasado"  onclick="filtBoleto('atrasado',this)">🔴 Atrasados</button>
+            <button class="tab"        id="btab-pago"      onclick="filtBoleto('pago',this)">✅ Pagos</button>
+          </div>
+          <select id="sel-mes-boleto" onchange="renderBoletos()" style="width:auto;padding:6px 10px;font-size:12px"></select>
+          <button class="btn btn-sm btn-accent" onclick="openModal('modal-boleto')" style="margin-left:auto">+ Novo Boleto</button>
+        </div>
+
+        <!-- Lista de boletos -->
+        <div class="section">
+          <div class="section-body-0">
+            <div id="lista-boletos" style="padding:0"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- ====== CARTÕES & PARCELAS ====== -->
       <div class="page" id="page-cartoes">
-        <div class="section">
-          <div class="section-head">
-            <span class="section-title">▣ Gestão de Plásticos</span>
-            <button class="btn btn-sm btn-accent" onclick="openModal('modal-cartao')">+ Cartão</button>
+
+        <!-- KPI cards -->
+        <div class="cards-row" id="cartoes-kpi"></div>
+
+        <!-- Sub-abas -->
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
+          <div class="tabs" style="margin-bottom:0">
+            <button class="tab active" id="ctab-cartoes"  onclick="filtCartao('cartoes',this)">💳 Meus Cartões</button>
+            <button class="tab"        id="ctab-dividas"  onclick="filtCartao('dividas',this)">📋 Dívidas</button>
+            <button class="tab"        id="ctab-projecao" onclick="filtCartao('projecao',this)">📅 Projeção</button>
           </div>
-          <div class="section-body">
-            <div class="plasticos-grid" id="plasticos-grid"></div>
+          <div id="cartao-filtro-wrap" style="display:none;margin-left:auto">
+            <select id="sel-cartao-filtro" onchange="renderCartaoDividas()" style="padding:6px 10px;font-size:12px">
+              <option value="">Todos os cartões</option>
+            </select>
+          </div>
+          <button class="btn btn-sm btn-accent" id="btn-add-cartao" onclick="openModal('modal-cartao')" style="margin-left:auto">+ Cartão</button>
+        </div>
+
+        <!-- Painel: Meus Cartões -->
+        <div id="painel-cartoes">
+          <div class="plasticos-grid" id="plasticos-grid"></div>
+        </div>
+
+        <!-- Painel: Dívidas -->
+        <div id="painel-dividas" style="display:none">
+          <div class="section">
+            <div class="section-head">
+              <span class="section-title">📋 Dívidas & Parcelas do Cartão</span>
+              <button class="btn btn-sm btn-accent" onclick="openModalDivida()">+ Nova Dívida</button>
+            </div>
+            <div id="lista-dividas-cartao"></div>
           </div>
         </div>
 
-        <div class="section">
-          <div class="section-head">
-            <span class="section-title">📅 Projeção de Parcelas — 12 meses</span>
-            <span class="badge bg-gold" id="proj-total-badge"></span>
-          </div>
-          <div class="section-body">
-            <div class="proj-grid" id="proj-grid"></div>
-            <div id="proj-detalhe" style="margin-top:16px"></div>
+        <!-- Painel: Projeção -->
+        <div id="painel-projecao" style="display:none">
+          <div class="section">
+            <div class="section-head">
+              <span class="section-title">📅 Projeção de Parcelas — 12 meses</span>
+              <span class="badge bg-gold" id="proj-total-badge"></span>
+            </div>
+            <div class="section-body">
+              <div class="proj-grid" id="proj-grid"></div>
+              <div id="proj-detalhe" style="margin-top:16px"></div>
+            </div>
           </div>
         </div>
 
-        <div class="section">
-          <div class="section-head"><span class="section-title">💳 Timeline de Gastos</span></div>
-          <div class="section-body-0">
-            <div style="padding:14px 20px 0" id="timeline-lancs"></div>
-          </div>
-        </div>
       </div>
 
       <!-- ====== COMPRAS B2B ====== -->
@@ -729,8 +804,11 @@ body.mode-empresa .lock-dot.filled{background:var(--e-gold);border-color:var(--e
         <div class="cards-row" id="emp-cards"></div>
         <div class="section">
           <div class="section-head">
-            <span class="section-title">🏦 Empréstimos e Financiamentos PJ</span>
-            <button class="btn btn-sm btn-accent" onclick="openModal('modal-emp')">+ Novo</button>
+            <span class="section-title">🏦 Empréstimos e Financiamentos</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-sm btn-ghost" onclick="openModal('modal-limite-parc')">⚙ Limite</button>
+              <button class="btn btn-sm btn-accent" onclick="openModal('modal-emp')">+ Novo</button>
+            </div>
           </div>
           <div class="section-body" id="emp-body"></div>
         </div>
@@ -1062,6 +1140,43 @@ body.mode-empresa .lock-dot.filled{background:var(--e-gold);border-color:var(--e
   </div>
 </div>
 
+
+<!-- Boleto / Conta com Vencimento -->
+<div class="modal-overlay hidden" id="modal-boleto">
+  <div class="modal">
+    <div class="modal-title">📄 Novo Boleto / Conta</div>
+    <div class="form-grid">
+      <div class="fg full"><label>Descrição</label><input type="text" id="b-desc" placeholder="Ex: Conta de luz, Aluguel, Internet..."></div>
+      <div class="fg"><label>Valor (R$)</label><input type="number" id="b-valor" step="0.01" placeholder="0,00"></div>
+      <div class="fg"><label>Data de Vencimento</label><input type="date" id="b-venc"></div>
+      <div class="fg"><label>Categoria</label>
+        <select id="b-cat">
+          <option>Moradia</option><option>Energia</option><option>Água</option><option>Internet</option>
+          <option>Telefone</option><option>Saúde</option><option>Educação</option><option>Impostos</option>
+          <option>Seguro</option><option>Transporte</option><option>Outros</option>
+        </select>
+      </div>
+      <div class="fg"><label>Conta / Banco</label><select id="b-conta"></select></div>
+      <div class="fg"><label>Recorrência</label>
+        <select id="b-recorr">
+          <option value="nao">Único</option>
+          <option value="mensal">Mensal (repete todo mês)</option>
+        </select>
+      </div>
+      <div class="fg"><label>Status</label>
+        <select id="b-status">
+          <option value="pendente">⏳ Pendente</option>
+          <option value="pago">✅ Pago</option>
+        </select>
+      </div>
+      <div class="fg full"><label>Observação</label><textarea id="b-obs" placeholder="Código de barras, número, etc..." style="height:56px"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-boleto')">Cancelar</button>
+      <button class="btn btn-accent" onclick="saveBoleto()">Salvar</button>
+    </div>
+  </div>
+</div>
 <!-- Cartão -->
 <div class="modal-overlay hidden" id="modal-cartao">
   <div class="modal">
@@ -1093,6 +1208,51 @@ body.mode-empresa .lock-dot.filled{background:var(--e-gold);border-color:var(--e
   </div>
 </div>
 
+
+<!-- Dívida do Cartão -->
+<div class="modal-overlay hidden" id="modal-divida-cartao">
+  <div class="modal">
+    <div class="modal-title">💳 Nova Dívida / Parcela do Cartão</div>
+    <div class="form-grid">
+      <div class="fg full"><label>Descrição</label><input type="text" id="dc-desc" placeholder="Ex: TV Samsung, Passagem, Roupa..."></div>
+      <div class="fg"><label>Valor total (R$)</label><input type="number" id="dc-valor" step="0.01" placeholder="0,00" oninput="calcParcDivida()"></div>
+      <div class="fg"><label>Cartão</label><select id="dc-cartao"></select></div>
+      <div class="fg"><label>Data da compra</label><input type="date" id="dc-data"></div>
+      <div class="fg"><label>Nº de parcelas</label>
+        <select id="dc-nparc" onchange="calcParcDivida()">
+          <option value="1">1x (à vista)</option>
+          <option value="2">2x</option><option value="3">3x</option><option value="4">4x</option>
+          <option value="5">5x</option><option value="6">6x</option><option value="7">7x</option>
+          <option value="8">8x</option><option value="9">9x</option><option value="10">10x</option>
+          <option value="11">11x</option><option value="12">12x</option><option value="18">18x</option>
+          <option value="24">24x</option><option value="36">36x</option>
+        </select>
+      </div>
+      <div class="fg"><label>Parcela atual (nº)</label><input type="number" id="dc-parcatual" value="1" min="1"></div>
+      <div class="fg"><label>Vencimento da próxima fatura</label><input type="date" id="dc-venc"></div>
+      <div class="fg"><label>Categoria</label>
+        <select id="dc-cat">
+          <option>Eletrônicos</option><option>Roupas</option><option>Alimentação</option>
+          <option>Saúde</option><option>Educação</option><option>Viagem</option>
+          <option>Lazer</option><option>Casa</option><option>Outros</option>
+        </select>
+      </div>
+      <div class="fg"><label>Status</label>
+        <select id="dc-status">
+          <option value="pendente">⏳ Pendente</option>
+          <option value="pago">✅ Pago</option>
+          <option value="atrasado">🔴 Atrasado</option>
+        </select>
+      </div>
+      <div id="dc-preview" style="grid-column:1/-1;background:var(--bg3);border-radius:9px;padding:10px 14px;font-size:12px;color:var(--text2);display:none"></div>
+      <div class="fg full"><label>Observação</label><textarea id="dc-obs" placeholder="Opcional..." style="height:48px"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-divida-cartao')">Cancelar</button>
+      <button class="btn btn-accent" onclick="saveDividaCartao()">Salvar</button>
+    </div>
+  </div>
+</div>
 <!-- Compra -->
 <div class="modal-overlay hidden" id="modal-compra">
   <div class="modal">
@@ -1169,6 +1329,28 @@ body.mode-empresa .lock-dot.filled{background:var(--e-gold);border-color:var(--e
   </div>
 </div>
 
+<!-- Modal: Limite Parcelas PJ -->
+<div class="modal-overlay hidden" id="modal-limite-parc">
+  <div class="modal">
+    <div class="modal-title">🏦 Limite de Comprometimento — Parcelas PJ</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.6">
+      Defina o valor máximo que as parcelas mensais dos empréstimos PJ podem representar. Uma boa prática financeira é não ultrapassar <strong>30–35%</strong> do faturamento bruto em dívidas.
+    </p>
+    <div class="form-grid">
+      <div class="fg full">
+        <label>Limite máximo de parcelas mensais (R$)</label>
+        <input type="number" id="limite-parc-input" placeholder="Ex: 5000" step="100" min="0">
+      </div>
+    </div>
+    <div id="limite-parc-preview" style="margin-top:12px;display:none;background:var(--bg3);border-radius:9px;padding:12px;font-size:12px;color:var(--text2);line-height:1.8"></div>
+    <div style="margin-top:10px;font-size:11px;color:var(--text3)">💡 Deixe em 0 ou vazio para remover o limite e mostrar apenas o valor.</div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-limite-parc')">Cancelar</button>
+      <button class="btn btn-accent" onclick="saveLimiteParc()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <input type="file" id="import-file" accept=".json" class="hidden" onchange="doImport(event)">
 
 <!-- ====== MOBILE BOTTOM NAV ====== -->
@@ -1176,17 +1358,14 @@ body.mode-empresa .lock-dot.filled{background:var(--e-gold);border-color:var(--e
   <button class="bnav-item active" id="bnav-home" onclick="go('home');setBNav('home')">
     <span class="bnav-ico">⌂</span>Dashboard
   </button>
-  <button class="bnav-item" id="bnav-lancamentos" onclick="go('lancamentos');setBNav('lancamentos')">
-    <span class="bnav-ico">◈</span>Lançamentos
+  <button class="bnav-item" id="bnav-boletos" onclick="go('boletos');setBNav('boletos')">
+    <span class="bnav-ico">📄</span>Boletos
   </button>
   <div class="bnav-fab-wrap">
-    <button class="bnav-fab" onclick="openModal('modal-lanc')">+</button>
+    <button class="bnav-fab" onclick="openModal('modal-boleto')">+</button>
   </div>
-  <button class="bnav-item" id="bnav-cartoes" onclick="go('cartoes');setBNav('cartoes')">
-    <span class="bnav-ico">▣</span>Cartões
-  </button>
-  <button class="bnav-item" id="bnav-relatorios" onclick="go('relatorios');setBNav('relatorios')">
-    <span class="bnav-ico">◫</span>Relatórios
+  <button class="bnav-item" id="bnav-lancamentos" onclick="go('lancamentos');setBNav('lancamentos')">
+    <span class="bnav-ico">◈</span>Gastos
   </button>
   <button class="bnav-item" id="bnav-configuracoes" onclick="go('configuracoes');setBNav('configuracoes')">
     <span class="bnav-ico">⚙</span>Config.
@@ -1210,7 +1389,9 @@ body.mode-empresa .lock-dot.filled{background:var(--e-gold);border-color:var(--e
     <div class="nav-item" onclick="go('lancamentos');toggleMobMenu()"><span class="nav-icon">◈</span> Lançamentos</div>
     <div class="nav-item" onclick="go('cartoes');toggleMobMenu()"><span class="nav-icon">▣</span> Cartões & Parcelas</div>
     <div style="font-size:9px;color:var(--text4);letter-spacing:1.5px;text-transform:uppercase;padding:6px 8px 3px">💰 Financeiro</div>
-    <div class="nav-item" onclick="go('lancamentos');toggleMobMenu()"><span class="nav-icon">◈</span> Lançamentos</div>
+    <div class="nav-item" onclick="go('lancamentos');toggleMobMenu()"><span class="nav-icon">◈</span> Gastos do Dia a Dia</div>
+    <div class="nav-item" onclick="go('boletos');toggleMobMenu()"><span class="nav-icon">📄</span> Boletos & Contas</div>
+    <div class="nav-item" onclick="go('emprestimos');toggleMobMenu()"><span class="nav-icon">🏦</span> Empréstimos</div>
     <div class="nav-item" onclick="go('cartoes');toggleMobMenu()"><span class="nav-icon">▣</span> Cartões & Parcelas</div>
     <div class="nav-item" onclick="go('clientes');toggleMobMenu()"><span class="nav-icon">👥</span> Clientes & Fiado</div>
     <div class="nav-item" onclick="go('fechamento');toggleMobMenu()"><span class="nav-icon">📆</span> Fechamento de Mês</div>
@@ -1324,6 +1505,9 @@ function defaultData() {
     mode: 'pessoal',
     pessoal: {
       lancamentos: [],
+      boletos: [],
+      emprestimos: [],
+      dividasCartao: [],
       cartoes: [],
       clientes: [],
       fechamentos: [],
@@ -1335,9 +1519,11 @@ function defaultData() {
     },
     empresa: {
       lancamentos: [],
+      boletos: [],
+      emprestimos: [],
+      dividasCartao: [],
       compras: [],
       fornecedores: [],
-      emprestimos: [],
       cartoes: [],
       clientes: [],
       fechamentos: [],
@@ -1380,8 +1566,11 @@ function save() {
 }
 function D() {
   const d = db[currentMode];
-  if(!d.clientes) d.clientes=[];
+  if(!d.clientes)    d.clientes=[];
   if(!d.fechamentos) d.fechamentos=[];
+  if(!d.boletos)       d.boletos=[];
+  if(!d.emprestimos)   d.emprestimos=[];
+  if(!d.dividasCartao) d.dividasCartao=[];
   return d;
 }
 
@@ -1426,7 +1615,7 @@ function setMode(m) {
   document.body.className = m==='empresa'?'mode-empresa':'';
   document.getElementById('btn-pessoal').className = 'prof-btn' + (m==='pessoal'?' active-pessoal':'');
   document.getElementById('btn-empresa').className  = 'prof-btn' + (m==='empresa'?' active-empresa':'');
-  const empEls = ['grp-empresa','nav-compras','nav-fornecedores','nav-emprestimos'];
+  const empEls = ['grp-empresa','nav-compras','nav-fornecedores'];
   empEls.forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display=m==='empresa'?'':'none'; });
   // show gauge only for empresa
   document.getElementById('home-gauge-section').style.display = m==='empresa'?'':'none';
@@ -1438,13 +1627,14 @@ function setMode(m) {
    ============================================================ */
 const PAGE_META = {
   home:          ['Dashboard','Visão geral · '+new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'})],
-  lancamentos:   ['Lançamentos','Todos os registros financeiros'],
+  lancamentos:   ['Gastos do Dia a Dia','Compras e despesas comuns pagas na hora'],
+  boletos:       ['Boletos & Contas','Contas com vencimento — pago, pendente e atrasado'],
+  emprestimos:   ['Empréstimos','Financiamentos, parcelas e tabela de amortização'],
   cartoes:       ['Cartões & Parcelas','Plásticos cadastrados e projeção de parcelas'],
   clientes:      ['Clientes & Fiado','Caderninho digital — controle de crédito e inadimplência'],
   fechamento:    ['Fechamento de Mês','Encerre o mês e preserve o histórico financeiro'],
   compras:       ['Compras B2B','Controle de compras empresariais'],
   fornecedores:  ['Fornecedores','Diretório de vendedores e histórico'],
-  emprestimos:   ['Empréstimos PJ','Financiamentos e tabela de amortização'],
   relatorios:    ['Relatórios & DRE','Fechamentos e demonstrativo de resultados'],
   historico:     ['Histórico & Evolução','Comparativo mensal — crescimento ou retração'],
   configuracoes: ['Configurações','Perfil, PIN, categorias e sincronização'],
@@ -1463,21 +1653,22 @@ function go(page) {
   document.getElementById('page-sub').textContent = meta[1];
   // Btn contexto
   const btnNovo = document.getElementById('btn-novo');
-  const btnMap = { home:'+ Lançamento', lancamentos:'+ Lançamento', cartoes:'+ Cartão', clientes:'+ Cliente', fechamento:null, compras:'+ Compra', fornecedores:'+ Fornecedor', emprestimos:'+ Empréstimo', relatorios:null, historico:null, configuracoes:null };
+  const btnMap = { home:'+ Gasto', lancamentos:'+ Gasto', boletos:'+ Boleto', emprestimos:'+ Empréstimo', cartoes:'+ Cartão', clientes:'+ Cliente', fechamento:null, compras:'+ Compra', fornecedores:'+ Fornecedor', relatorios:null, historico:null, configuracoes:null };
   if(btnMap[page]===null){ btnNovo.style.display='none'; }
-  else { btnNovo.style.display=''; btnNovo.textContent=btnMap[page]||'+ Novo'; btnNovo.onclick=()=>{ const mmap={home:'modal-lanc',lancamentos:'modal-lanc',cartoes:'modal-cartao',clientes:'modal-cliente',compras:'modal-compra',fornecedores:'modal-forn',emprestimos:'modal-emp'}; openModal(mmap[page]||'modal-lanc'); }; }
+  else { btnNovo.style.display=''; btnNovo.textContent=btnMap[page]||'+ Novo'; btnNovo.onclick=()=>{ const mmap={home:'modal-lanc',lancamentos:'modal-lanc',boletos:'modal-boleto',emprestimos:'modal-emp',cartoes:'modal-cartao',clientes:'modal-cliente',compras:'modal-compra',fornecedores:'modal-forn'}; openModal(mmap[page]||'modal-lanc'); }; }
   setTimeout(()=>renderPage(page), 30);
 }
 
 function renderPage(p) {
   if(p==='home') renderHome();
   else if(p==='lancamentos') renderLancs();
+  else if(p==='boletos') renderBoletos();
+  else if(p==='emprestimos') renderEmprestimos();
   else if(p==='cartoes') renderCartoes();
   else if(p==='clientes') renderClientes();
   else if(p==='fechamento') renderFechamento();
   else if(p==='compras') renderCompras();
   else if(p==='fornecedores') renderFornecedores();
-  else if(p==='emprestimos') renderEmprestimos();
   else if(p==='relatorios') renderRelatorios();
   else if(p==='historico') renderHistorico();
   else if(p==='configuracoes') renderConfiguracoes();
@@ -1527,14 +1718,38 @@ function renderHome() {
     { label:'Receitas', val:fmt(rec), cls:'kcard-teal', sub:'Mês atual', col:'var(--p-teal)' },
     { label:'Despesas', val:fmt(dep), cls:'kcard-red', sub:'Mês atual', col:'var(--danger)' },
   ];
+  // Cards especiais empresa (com botão editar)
+  let extraCards = '';
   if (currentMode==='empresa') {
     const compMes = (d.compras||[]).filter(c=>c.data&&c.data.startsWith(mesKey));
     const compTotal = compMes.reduce((s,c)=>s+Number(c.valor),0);
     const teto = (d.tetoCompras||{})['Total']||0;
-    cards.push({ label:'Compras', val:fmt(compTotal), cls:'kcard-gold', sub:teto?`${Math.round(compTotal/teto*100)}% do teto`:'Mês atual', col:'var(--e-gold)' });
+    const pctComp = teto ? Math.min(100,Math.round(compTotal/teto*100)) : 0;
+    const corComp = pctComp>90?'var(--danger)':pctComp>70?'var(--warn)':'var(--e-gold)';
+    extraCards += `<div class="kcard kcard-gold" style="position:relative">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="kcard-label">Compras</div>
+        <button onclick="openModal('modal-teto')" style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:var(--e-gold);border-radius:6px;font-size:10px;padding:2px 7px;cursor:pointer;font-family:inherit">✎ Teto</button>
+      </div>
+      <div class="kcard-value" style="color:${corComp}">${fmt(compTotal)}</div>
+      <div class="kcard-sub">${teto ? pctComp+'% do teto ('+fmt(teto)+')' : 'Clique em ✎ Teto para definir limite'}</div>
+      ${teto ? `<div class="prog-bar" style="margin-top:8px"><div class="prog-fill" style="width:${pctComp}%;background:${pctComp>90?'var(--danger)':pctComp>70?'var(--warn)':'var(--e-gold)'}"></div></div>` : ''}
+    </div>`;
+
     const empParc = (d.emprestimos||[]).reduce((s,e)=>s+Number(e.parcela||e.parc||0),0);
-    cards.push({ label:'Parcelas PJ', val:fmt(empParc), cls:'kcard-warn', sub:'Comprometimento mensal', col:'var(--warn)' });
-    // Fiado card
+    const limParc = Number(d.limiteParcelasRenda||0);
+    const pctParc = limParc ? Math.min(100,Math.round(empParc/limParc*100)) : 0;
+    const corParc = pctParc>90?'var(--danger)':pctParc>70?'var(--warn)':'var(--warn)';
+    extraCards += `<div class="kcard kcard-warn" style="position:relative">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="kcard-label">Parcelas PJ</div>
+        <button onclick="openModal('modal-limite-parc')" style="background:rgba(224,140,58,0.15);border:1px solid rgba(224,140,58,0.3);color:var(--warn);border-radius:6px;font-size:10px;padding:2px 7px;cursor:pointer;font-family:inherit">✎ Limite</button>
+      </div>
+      <div class="kcard-value" style="color:${limParc ? corParc : 'var(--warn)'}">${fmt(empParc)}</div>
+      <div class="kcard-sub">${limParc ? pctParc+'% do limite ('+fmt(limParc)+')' : 'Clique em ✎ Limite para definir'}</div>
+      ${limParc ? `<div class="prog-bar" style="margin-top:8px"><div class="prog-fill" style="width:${pctParc}%;background:${pctParc>90?'var(--danger)':pctParc>70?'var(--warn)':'var(--p-blue)'}"></div></div>` : ''}
+    </div>`;
+
     const clientes = d.clientes||[];
     const totalFiado = clientes.reduce((s,c)=>s+Math.max(0,calcSaldoCliente(c)),0);
     const inadimplCount = clientes.filter(c=>{
@@ -1549,12 +1764,27 @@ function renderHome() {
       col: inadimplCount>0?'var(--danger)':'var(--p-teal)'
     });
   }
-  document.getElementById('home-cards').innerHTML = cards.map(c=>`
-    <div class="kcard ${c.cls}">
+  document.getElementById('home-cards').innerHTML =
+    cards.map(c=>`<div class="kcard ${c.cls}">
       <div class="kcard-label">${c.label}</div>
       <div class="kcard-value" style="color:${c.col}">${c.val}</div>
       <div class="kcard-sub">${c.sub}</div>
-    </div>`).join('');
+    </div>`).join('') + extraCards;
+
+  // Boleto KPI card no topo (ambos modos)
+  const boletosMes = (d.boletos||[]).filter(b=>b.venc&&b.venc.startsWith(mesKey));
+  const bPagos   = boletosMes.filter(b=>statusBoleto(b)==='pago').length;
+  const bPend    = boletosMes.filter(b=>statusBoleto(b)==='pendente').length;
+  const bAtras   = boletosMes.filter(b=>statusBoleto(b)==='atrasado').length;
+  const bValPend = boletosMes.filter(b=>statusBoleto(b)!=='pago').reduce((s,b)=>s+Number(b.valor),0);
+  if(boletosMes.length) {
+    const boletosCard = `<div class="kcard ${bAtras>0?'kcard-red':'kcard-warn'}" style="cursor:pointer" onclick="go('boletos')">
+      <div class="kcard-label">📄 Boletos do Mês</div>
+      <div class="kcard-value" style="color:${bAtras>0?'var(--danger)':'var(--warn)'}">${fmt(bValPend)}</div>
+      <div class="kcard-sub">${bAtras>0?bAtras+' atrasado'+( bAtras>1?'s':'')+' · ':''}${bPend} pendente${bPend!==1?'s':''} · ${bPagos} pago${bPagos!==1?'s':''}</div>
+    </div>`;
+    document.getElementById('home-cards').innerHTML += boletosCard;
+  }
 
   // Gauge (empresa)
   if(currentMode==='empresa') renderGauge();
@@ -1563,6 +1793,46 @@ function renderHome() {
   renderChartFluxo();
   renderChartCats();
   renderAlertas();
+  renderHomeBoletos();
+}
+
+function renderHomeBoletos() {
+  const d = D();
+  const now = new Date();
+  const mesKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const boletosMes = (d.boletos||[]).filter(b=>b.venc&&b.venc.startsWith(mesKey));
+  const pagos   = boletosMes.filter(b=>statusBoleto(b)==='pago');
+  const pend    = boletosMes.filter(b=>statusBoleto(b)==='pendente');
+  const atras   = boletosMes.filter(b=>statusBoleto(b)==='atrasado');
+
+  const kpiEl = document.getElementById('home-boletos-kpi');
+  if(kpiEl) {
+    kpiEl.innerHTML = [
+      {lbl:'✅ Pagos', n:pagos.length, v:pagos.reduce((s,b)=>s+Number(b.valor),0), cor:'var(--p-green)'},
+      {lbl:'⏳ Pendentes', n:pend.length, v:pend.reduce((s,b)=>s+Number(b.valor),0), cor:'var(--warn)'},
+      {lbl:'🔴 Atrasados', n:atras.length, v:atras.reduce((s,b)=>s+Number(b.valor),0), cor:'var(--danger)'},
+    ].map(x=>`<div style="background:var(--bg3);border-radius:9px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:var(--text3);margin-bottom:4px">${x.lbl}</div>
+      <div style="font-size:17px;font-weight:600;color:${x.cor};font-family:'Cormorant Garamond',serif">${x.n}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:2px">${fmt(x.v)}</div>
+    </div>`).join('');
+  }
+
+  destroyChart('homeBoletos');
+  const ctx = document.getElementById('chart-home-boletos');
+  if(!ctx) return;
+  if(!boletosMes.length) {
+    ctx.parentElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:12px">Nenhum boleto este mês — <span style="color:var(--accent);cursor:pointer;margin-left:4px" onclick="go(&quot;boletos&quot;)">+ Adicionar</span></div>';
+    return;
+  }
+  charts['homeBoletos'] = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['✅ Pagos','⏳ Pendentes','🔴 Atrasados'],
+      datasets:[{ data:[pagos.length||0, pend.length||0, atras.length||0], backgroundColor:['#4ecb8d','#e08c3a','#e05555'], borderWidth:0, hoverOffset:5 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{ legend:{ position:'bottom', labels:{ color:'#9896a0', font:{size:10}, boxWidth:8 } } } }
+  });
 }
 
 function renderGauge() {
@@ -1636,27 +1906,50 @@ function renderAlertas() {
   const now = new Date();
   const alertas = [];
 
-  // Parcelas
+  // 🔴 Boletos atrasados e próximos do vencimento
+  (d.boletos||[]).filter(b=>b.status!=='pago'&&b.venc).forEach(b=>{
+    const v = new Date(b.venc); v.setHours(0,0,0,0);
+    const diff = Math.ceil((v-now)/(864e5));
+    if(diff<0&&diff>=-30)  alertas.push({title:b.desc,sub:`Boleto vencido · ${fmtD(b.venc)}`,diff,val:b.valor,icon:'📄',ico_cls:'ai-red'});
+    else if(diff>=0&&diff<=7) alertas.push({title:b.desc,sub:`Boleto vence ${diff===0?'hoje':diff===1?'amanhã':'em '+diff+' dias'} · ${fmtD(b.venc)}`,diff,val:b.valor,icon:'📄',ico_cls:diff<=1?'ai-red':'ai-warn'});
+  });
+
+  // 💳 Parcelas
   d.lancamentos.filter(l=>l.parcelado==='sim'&&l.vencimento).forEach(l=>{
     const dt = new Date(now.getFullYear(),now.getMonth(),Number(l.vencimento));
     const diff = Math.ceil((dt-now)/(1000*60*60*24));
     if(diff>=-1&&diff<=10) alertas.push({title:l.desc,sub:`Parcela · vence dia ${l.vencimento}`,diff,val:l.valor,icon:'💳',ico_cls:diff<=2?'ai-red':diff<=5?'ai-warn':'ai-gold'});
   });
 
-  // Empréstimos PJ
-  if(currentMode==='empresa') {
+  // 🏦 Empréstimos (todos os modos)
+  {
     (d.emprestimos||[]).forEach(e=>{
       const dt = new Date(now.getFullYear(),now.getMonth(),Number(e.dia||10));
       const diff = Math.ceil((dt-now)/(1000*60*60*24));
-      if(diff>=-1&&diff<=10) alertas.push({title:e.desc,sub:`Empréstimo · ${e.banco}`,diff,val:e.parcela,icon:'🏦',ico_cls:'ai-red'});
+      if(diff>=-1&&diff<=10) alertas.push({title:e.desc,sub:`Empréstimo · ${e.banco||''}`,diff,val:e.parc||e.parcela,icon:'🏦',ico_cls:'ai-red'});
     });
-    // Teto 90%
+  }
+
+  // Teto compras (empresa)
+  if(currentMode==='empresa') {
     const mesKey=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
     const compMes=(d.compras||[]).filter(c=>c.data&&c.data.startsWith(mesKey));
     const compTotal=compMes.reduce((s,c)=>s+Number(c.valor),0);
     const teto=(d.tetoCompras||{})['Total']||0;
     if(teto&&compTotal/teto>=0.8) alertas.push({title:`${Math.round(compTotal/teto*100)}% do teto de compras atingido`,sub:`${fmt(compTotal)} de ${fmt(teto)}`,diff:0,val:0,icon:'⚠',ico_cls:'ai-warn'});
   }
+
+  // 💳 Dívidas de cartão atrasadas ou vencendo
+  (d.dividasCartao||[]).filter(dv=>dv.status!=='pago').forEach(dv=>{
+    const st = statusDivida(dv);
+    if(st==='atrasado') {
+      const diff = dv.venc ? Math.ceil((new Date(dv.venc)-now)/864e5) : -1;
+      alertas.push({title:dv.desc, sub:`Cartão vencido · ${dv.venc?fmtD(dv.venc):'—'}`, diff, val:dv.valorParcela||dv.valor, icon:'💳', ico_cls:'ai-red'});
+    } else if(st==='vencendo') {
+      const diff = Math.ceil((new Date(dv.venc)-now)/864e5);
+      alertas.push({title:dv.desc, sub:`Fatura vence ${diff===0?'hoje':diff===1?'amanhã':'em '+diff+' dias'} · ${fmtD(dv.venc)}`, diff, val:dv.valorParcela||dv.valor, icon:'💳', ico_cls:'ai-warn'});
+    }
+  });
 
   // Clientes inadimplentes
   (d.clientes||[]).forEach(c=>{
@@ -1738,37 +2031,271 @@ function populateMesSel(id, lancs) {
 /* ============================================================
    CARTÕES & PARCELAS
    ============================================================ */
+/* ============================================================
+   CARTÕES & PARCELAS — SISTEMA COMPLETO
+   ============================================================ */
+let cartaoSubTab = 'cartoes';
+
+function filtCartao(tab, btn) {
+  cartaoSubTab = tab;
+  document.querySelectorAll('#page-cartoes .tab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.getElementById('painel-cartoes').style.display  = tab==='cartoes'  ? '' : 'none';
+  document.getElementById('painel-dividas').style.display  = tab==='dividas'  ? '' : 'none';
+  document.getElementById('painel-projecao').style.display = tab==='projecao' ? '' : 'none';
+  document.getElementById('cartao-filtro-wrap').style.display = tab==='dividas' ? '' : 'none';
+  document.getElementById('btn-add-cartao').style.display  = tab==='cartoes'  ? '' : 'none';
+  if(tab==='cartoes')  renderPlasticos();
+  if(tab==='dividas')  renderCartaoDividas();
+  if(tab==='projecao') renderProjecao();
+}
+
 function renderCartoes() {
-  renderPlasticos();
-  renderProjecao();
-  renderTimeline();
+  renderCartaoKPI();
+  filtCartao(cartaoSubTab, document.getElementById('ctab-'+cartaoSubTab));
+}
+
+function renderCartaoKPI() {
+  const d = D();
+  const dividas = d.dividasCartao||[];
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const totalDivida = dividas.reduce((s,dv)=>s+Number(dv.valor||0),0);
+  const pagas    = dividas.filter(dv=>dv.status==='pago').length;
+  const atrasadas= dividas.filter(dv=>{
+    if(dv.status==='pago') return false;
+    if(!dv.venc) return dv.status==='atrasado';
+    return new Date(dv.venc)<hoje;
+  }).length;
+  const pendentes= dividas.filter(dv=>dv.status!=='pago').length - atrasadas;
+  document.getElementById('cartoes-kpi').innerHTML = `
+    <div class="kcard kcard-blue"><div class="kcard-label">💳 Cartões</div><div class="kcard-value" style="color:var(--p-blue)">${(d.cartoes||[]).length}</div><div class="kcard-sub">Cadastrados</div></div>
+    <div class="kcard kcard-red"><div class="kcard-label">Total em dívidas</div><div class="kcard-value" style="color:var(--danger)">${fmt(totalDivida)}</div><div class="kcard-sub">${dividas.length} registro${dividas.length!==1?'s':''}</div></div>
+    <div class="kcard kcard-warn"><div class="kcard-label">⏳ Pendentes</div><div class="kcard-value" style="color:var(--warn)">${pendentes}</div><div class="kcard-sub">A pagar</div></div>
+    <div class="kcard ${atrasadas>0?'kcard-red':'kcard-green'}"><div class="kcard-label">${atrasadas>0?'🔴 Atrasadas':'✅ Pagas'}</div><div class="kcard-value" style="color:${atrasadas>0?'var(--danger)':'var(--p-green)'}">${atrasadas>0?atrasadas:pagas}</div><div class="kcard-sub">${atrasadas>0?'Vencidas':'Quitadas'}</div></div>
+  `;
 }
 
 function renderPlasticos() {
   const d = D();
   const cartoes = d.cartoes||[];
+  const dividas = d.dividasCartao||[];
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+
   if(!cartoes.length){
-    document.getElementById('plasticos-grid').innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">💳</div><div style="font-size:13px">Nenhum cartão cadastrado</div></div>';
+    document.getElementById('plasticos-grid').innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">💳</div><div style="font-size:13px;margin-bottom:8px">Nenhum cartão cadastrado</div><button class="btn btn-accent btn-sm" onclick="openModal(&quot;modal-cartao&quot;)">+ Adicionar cartão</button></div>';
     return;
   }
-  document.getElementById('plasticos-grid').innerHTML = cartoes.map((c,i)=>`
-    <div class="plastico" style="background:${c.cor||'linear-gradient(135deg,#2d2d3a,#1a1a26)'}">
-      <div class="plastico-bg" style="background:radial-gradient(circle at 80% 20%,rgba(255,255,255,0.08),transparent)"></div>
-      <div class="plastico-top">
-        <div class="plastico-chip"></div>
-        <span style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:500">${c.bandeira||''}</span>
+
+  document.getElementById('plasticos-grid').innerHTML = cartoes.map((c,i)=>{
+    // Calculate usage from dividas linked to this card
+    const divCard = dividas.filter(dv=>dv.cartaoId===c.id);
+    const totalUsado = divCard.filter(dv=>dv.status!=='pago').reduce((s,dv)=>s+Number(dv.valorParcela||dv.valor||0),0);
+    const pctLimite = c.limite ? Math.min(100,Math.round(totalUsado/c.limite*100)) : 0;
+    const atrasadas = divCard.filter(dv=>{
+      if(dv.status==='pago') return false;
+      return dv.status==='atrasado'||(dv.venc&&new Date(dv.venc)<hoje);
+    }).length;
+    const vencendo = divCard.filter(dv=>{
+      if(dv.status==='pago') return false;
+      if(!dv.venc) return false;
+      const v=new Date(dv.venc); v.setHours(0,0,0,0);
+      const diff=Math.ceil((v-hoje)/864e5);
+      return diff>=0&&diff<=5;
+    }).length;
+    const corLimite = pctLimite>90?'#e05555':pctLimite>70?'#e08c3a':'#4ecb8d';
+    return `
+    <div style="position:relative">
+      <div class="plastico" style="background:${c.cor||'linear-gradient(135deg,#2d2d3a,#1a1a26)'}" onclick="verFaturaCartao(${i})">
+        <div class="plastico-bg" style="background:radial-gradient(circle at 80% 20%,rgba(255,255,255,0.08),transparent)"></div>
+        <div class="plastico-top">
+          <div class="plastico-chip"></div>
+          <div style="display:flex;gap:6px;align-items:center">
+            ${atrasadas>0?`<span style="background:rgba(224,85,85,0.8);color:#fff;border-radius:10px;font-size:9px;padding:2px 7px;font-weight:700">🔴 ${atrasadas} atrasada${atrasadas>1?'s':''}</span>`:''}
+            ${vencendo>0&&!atrasadas?`<span style="background:rgba(224,140,58,0.8);color:#fff;border-radius:10px;font-size:9px;padding:2px 7px;font-weight:700">⚠ Vence em breve</span>`:''}
+            <span style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:500">${c.bandeira||''}</span>
+          </div>
+        </div>
+        <div class="plastico-number">•••• •••• •••• ${c.num||'****'}</div>
+        <div class="plastico-bottom">
+          <div class="plastico-name">${c.nome||''}</div>
+          <div class="plastico-bank">${c.banco||''}</div>
+          <div class="plastico-limit">${c.limite?'Limite '+fmt(c.limite):''} · Fecha dia ${c.fecha||'—'} · Vence dia ${c.vence||'—'}</div>
+          ${c.limite?`<div style="margin-top:8px"><div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:3px"><span>Utilizado: ${fmt(totalUsado)}</span><span>${pctLimite}%</span></div><div style="height:4px;background:rgba(255,255,255,0.15);border-radius:2px"><div style="height:100%;width:${pctLimite}%;background:${corLimite};border-radius:2px;transition:width 0.6s"></div></div></div>`:''}
+        </div>
+        <button style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.3);border:none;color:rgba(255,255,255,0.5);border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:11px;z-index:2" onclick="event.stopPropagation();delCartao(${i})">✕</button>
       </div>
-      <div class="plastico-number">•••• •••• •••• ${c.num||'****'}</div>
-      <div class="plastico-bottom">
-        <div class="plastico-name">${c.nome||''}</div>
-        <div class="plastico-bank">${c.banco||''}</div>
-        <div class="plastico-limit">${c.limite?'Limite '+fmt(c.limite):''} · Fecha dia ${c.fecha||'—'}</div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn btn-xs" style="flex:1;justify-content:center;font-size:11px" onclick="verFaturaCartao(${i})">📋 Ver dívidas</button>
+        <button class="btn btn-xs btn-accent" style="flex:1;justify-content:center;font-size:11px" onclick="openModalDivida(${i})">+ Dívida</button>
       </div>
-      <button style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.3);border:none;color:rgba(255,255,255,0.5);border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:11px" onclick="delCartao(${i})">✕</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
-function delCartao(i){ if(!confirm('Remover cartão?'))return; D().cartoes.splice(i,1); save(); renderPlasticos(); }
+function delCartao(i){
+  if(!confirm('Remover cartão? As dívidas vinculadas serão mantidas.')) return;
+  D().cartoes.splice(i,1); save(); renderPlasticos(); renderCartaoKPI();
+}
+
+function verFaturaCartao(i) {
+  const c = D().cartoes[i];
+  if(!c) return;
+  document.getElementById('sel-cartao-filtro').value = c.id||'';
+  filtCartao('dividas', document.getElementById('ctab-dividas'));
+}
+
+function openModalDivida(cartaoIdx) {
+  const d = D();
+  const cartoes = d.cartoes||[];
+  const el = document.getElementById('dc-cartao');
+  el.innerHTML = cartoes.map(c=>`<option value="${c.id}">${c.nome} ••••${c.num||'****'}</option>`).join('') || '<option value="">Nenhum cartão cadastrado</option>';
+  if(cartaoIdx!==undefined && cartoes[cartaoIdx]) el.value = cartoes[cartaoIdx].id;
+  document.getElementById('dc-data').value = today();
+  // Set venc to card's vence day this month
+  const now = new Date();
+  let vencDay = cartaoIdx!==undefined&&cartoes[cartaoIdx]?.vence ? String(cartoes[cartaoIdx].vence).padStart(2,'0') : '10';
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  document.getElementById('dc-venc').value = `${now.getFullYear()}-${mm}-${vencDay}`;
+  document.getElementById('dc-desc').value='';
+  document.getElementById('dc-valor').value='';
+  document.getElementById('dc-nparc').value='1';
+  document.getElementById('dc-parcatual').value='1';
+  document.getElementById('dc-status').value='pendente';
+  document.getElementById('dc-obs').value='';
+  document.getElementById('dc-preview').style.display='none';
+  openModal('modal-divida-cartao');
+}
+
+function calcParcDivida() {
+  const val = parseFloat(document.getElementById('dc-valor').value)||0;
+  const n   = parseInt(document.getElementById('dc-nparc').value)||1;
+  const prev = document.getElementById('dc-preview');
+  if(val&&n>1) {
+    prev.style.display='block';
+    prev.innerHTML = `💡 ${n}x de <strong style="color:var(--p-green)">${fmt(val/n)}</strong> · Total: ${fmt(val)}`;
+  } else {
+    prev.style.display='none';
+  }
+}
+
+function saveDividaCartao() {
+  const desc  = document.getElementById('dc-desc').value.trim();
+  const valor = parseFloat(document.getElementById('dc-valor').value);
+  if(!desc||!valor){ alert('Preencha descrição e valor.'); return; }
+  const nparc = parseInt(document.getElementById('dc-nparc').value)||1;
+  const dv = {
+    id:          Date.now(),
+    desc,
+    valor,
+    valorParcela: Math.round(valor/nparc*100)/100,
+    cartaoId:    document.getElementById('dc-cartao').value,
+    data:        document.getElementById('dc-data').value,
+    nparc,
+    parcAtual:   parseInt(document.getElementById('dc-parcatual').value)||1,
+    venc:        document.getElementById('dc-venc').value,
+    cat:         document.getElementById('dc-cat').value,
+    status:      document.getElementById('dc-status').value,
+    obs:         document.getElementById('dc-obs').value,
+  };
+  D().dividasCartao.push(dv);
+  save(); closeModal('modal-divida-cartao');
+  renderCartaoKPI(); renderPlasticos();
+  if(currentPage==='home') renderHome();
+}
+
+function statusDivida(dv) {
+  if(dv.status==='pago') return 'pago';
+  if(dv.status==='atrasado') return 'atrasado';
+  if(dv.venc) {
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const v = new Date(dv.venc); v.setHours(0,0,0,0);
+    if(v < hoje) return 'atrasado';
+    const diff = Math.ceil((v-hoje)/864e5);
+    if(diff<=5) return 'vencendo';
+  }
+  return 'pendente';
+}
+
+function renderCartaoDividas() {
+  const d = D();
+  const dividas = d.dividasCartao||[];
+  const cartoes = d.cartoes||[];
+  const filtCartaoId = document.getElementById('sel-cartao-filtro')?.value||'';
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+
+  // Populate filter select
+  const sel = document.getElementById('sel-cartao-filtro');
+  if(sel) {
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Todos os cartões</option>' +
+      cartoes.map(c=>`<option value="${c.id}" ${c.id==cur?'selected':''}>${c.nome} ••••${c.num||''}</option>`).join('');
+  }
+
+  let lista = filtCartaoId ? dividas.filter(dv=>String(dv.cartaoId)===String(filtCartaoId)) : [...dividas];
+  lista.sort((a,b)=>(a.venc||'')>(b.venc||'')?1:-1);
+
+  const el = document.getElementById('lista-dividas-cartao');
+  if(!lista.length){
+    el.innerHTML='<div class="empty" style="padding:40px"><div class="empty-ico">💳</div><div style="font-size:13px;margin-bottom:8px">Nenhuma dívida cadastrada</div><button class="btn btn-accent btn-sm" onclick="openModalDivida()">+ Adicionar dívida</button></div>';
+    return;
+  }
+
+  el.innerHTML = lista.map(dv=>{
+    const idx = d.dividasCartao.indexOf(dv);
+    const st = statusDivida(dv);
+    const cartao = cartoes.find(c=>String(c.id)===String(dv.cartaoId));
+    const cartaoNome = cartao ? cartao.nome+' ••••'+(cartao.num||'') : '—';
+
+    let stIcon, stCor, stLabel, stBg;
+    if(st==='pago')     { stIcon='✅'; stCor='var(--p-green)'; stLabel='Pago'; stBg='rgba(78,203,141,0.04)'; }
+    else if(st==='atrasado') { stIcon='🔴'; stCor='var(--danger)'; stLabel='Atrasado'; stBg='rgba(224,85,85,0.05)'; }
+    else if(st==='vencendo') { stIcon='⚠️'; stCor='var(--warn)'; stLabel='Vence em breve'; stBg='rgba(224,140,58,0.05)'; }
+    else               { stIcon='⏳'; stCor='var(--text2)'; stLabel='Pendente'; stBg='transparent'; }
+
+    const diff = dv.venc ? Math.ceil((new Date(dv.venc)-hoje)/864e5) : null;
+    const diffLabel = diff===null?'':diff<0?`Venceu há ${-diff}d`:diff===0?'Hoje':diff===1?'Amanhã':`Em ${diff}d`;
+    const parcelaTxt = dv.nparc>1 ? `${dv.parcAtual||1}/${dv.nparc}x de ${fmt(dv.valorParcela||dv.valor)}` : 'À vista';
+
+    return `<div style="display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);background:${stBg};transition:background 0.15s">
+      <div style="font-size:22px;width:30px;text-align:center;flex-shrink:0">${stIcon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${dv.desc}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap">
+          <span>${badge(cartaoNome,'bg-blue')}</span>
+          <span>${badge(dv.cat||'Outros')}</span>
+          <span style="color:var(--text3)">${parcelaTxt}</span>
+          ${dv.venc?`<span style="color:${stCor};font-weight:500">${fmtD(dv.venc)}${diffLabel?' · '+diffLabel:''}</span>`:''}
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;margin-right:8px">
+        <div style="font-size:15px;font-weight:700;color:${st==='pago'?'var(--p-green)':'var(--danger)'}">${fmt(dv.valor)}</div>
+        <div style="font-size:11px;color:${stCor};font-weight:600;margin-top:2px">${stLabel}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
+        ${st!=='pago'?`<button onclick="marcarDividaPaga(${idx})" style="background:rgba(78,203,141,0.15);border:1px solid rgba(78,203,141,0.3);color:var(--p-green);border-radius:7px;padding:5px 9px;font-size:11px;cursor:pointer;white-space:nowrap">✓ Pagar</button>`:''}
+        ${st==='pago'?`<button onclick="marcarDividaPendente(${idx})" style="background:rgba(224,140,58,0.12);border:1px solid rgba(224,140,58,0.3);color:var(--warn);border-radius:7px;padding:5px 9px;font-size:11px;cursor:pointer">↩ Desfazer</button>`:''}
+        <button onclick="delDividaCartao(${idx})" style="background:rgba(224,85,85,0.1);border:1px solid rgba(224,85,85,0.2);color:var(--danger);border-radius:7px;padding:5px 9px;font-size:11px;cursor:pointer">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function marcarDividaPaga(idx) {
+  const dv = D().dividasCartao[idx]; if(!dv) return;
+  dv.status='pago'; dv.pagoEm=today();
+  save(); renderCartaoDividas(); renderCartaoKPI();
+  if(currentPage==='home') renderHome();
+}
+function marcarDividaPendente(idx) {
+  const dv = D().dividasCartao[idx]; if(!dv) return;
+  dv.status='pendente'; delete dv.pagoEm;
+  save(); renderCartaoDividas(); renderCartaoKPI();
+}
+function delDividaCartao(idx) {
+  if(!confirm('Remover dívida?')) return;
+  D().dividasCartao.splice(idx,1);
+  save(); renderCartaoDividas(); renderCartaoKPI();
+}
 
 function renderProjecao() {
   const d = D();
@@ -1976,9 +2503,21 @@ function renderEmprestimos() {
   const totalD = emps.reduce((s,e)=>s+Number(e.val||e.valor||0),0);
   const totalP = emps.reduce((s,e)=>s+Number(e.parc||e.parcela||0),0);
 
+  const limParc = Number(d.limiteParcelasRenda||0);
+  const pctParc = limParc ? Math.min(100,Math.round(totalP/limParc*100)) : 0;
+  const corParc = pctParc>90?'var(--danger)':pctParc>70?'var(--warn)':'var(--warn)';
+
   document.getElementById('emp-cards').innerHTML = `
     <div class="kcard kcard-red"><div class="kcard-label">Dívida total</div><div class="kcard-value" style="color:var(--danger)">${fmt(totalD)}</div><div class="kcard-sub">${emps.length} empréstimo${emps.length!==1?'s':''}</div></div>
-    <div class="kcard kcard-warn"><div class="kcard-label">Parcelas/mês</div><div class="kcard-value" style="color:var(--warn)">${fmt(totalP)}</div><div class="kcard-sub">Comprometimento mensal</div></div>
+    <div class="kcard kcard-warn" style="position:relative">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="kcard-label">Parcelas/mês</div>
+        <button class="btn btn-xs btn-ghost" style="font-size:10px;padding:2px 7px;margin-top:-2px" onclick="openModal('modal-limite-parc')">✎ Limite</button>
+      </div>
+      <div class="kcard-value" style="color:${corParc}">${fmt(totalP)}</div>
+      <div class="kcard-sub">${limParc ? `${pctParc}% do limite (${fmt(limParc)})` : 'Comprometimento mensal · <span style="color:var(--p-blue);cursor:pointer" onclick="openModal(\'modal-limite-parc\')">Definir limite</span>'}</div>
+      ${limParc ? `<div class="prog-bar" style="margin-top:8px"><div class="prog-fill" style="width:${pctParc}%;background:${pctParc>90?'var(--danger)':pctParc>70?'var(--warn)':'var(--p-blue)'}"></div></div>` : ''}
+    </div>
   `;
 
   if(!emps.length){ document.getElementById('emp-body').innerHTML='<div class="empty"><div class="empty-ico">🏦</div><div>Nenhum empréstimo</div></div>'; return; }
@@ -2088,6 +2627,192 @@ function renderChartRvD(){
   charts['rvd']=new Chart(ctx,{type:'bar',data:{labels:labs,datasets:[{label:'Receitas',data:rs,backgroundColor:'rgba(78,203,141,0.7)',borderRadius:5},{label:'Despesas',data:ds,backgroundColor:'rgba(224,85,85,0.7)',borderRadius:5}]},options:{...CHART_OPTS,responsive:true,maintainAspectRatio:false}});
 }
 
+
+/* ============================================================
+   BOLETOS & CONTAS
+   ============================================================ */
+let boletoFilter = 'todos';
+
+function filtBoleto(f, btn) {
+  boletoFilter = f;
+  document.querySelectorAll('#page-boletos .tab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderBoletos();
+}
+
+function statusBoleto(b) {
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  if(b.status === 'pago') return 'pago';
+  if(b.venc) {
+    const v = new Date(b.venc); v.setHours(0,0,0,0);
+    if(v < hoje) return 'atrasado';
+  }
+  return 'pendente';
+}
+
+function renderBoletos() {
+  const d = D();
+  const boletos = d.boletos || [];
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const mesKey = document.getElementById('sel-mes-boleto')?.value || '';
+
+  // Populate month selector
+  const sel = document.getElementById('sel-mes-boleto');
+  if(sel) {
+    const meses = [...new Set(boletos.map(b=>b.venc?b.venc.substring(0,7):null).filter(Boolean))].sort().reverse();
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Todos os meses</option>' + meses.map(m=>`<option value="${m}" ${m===cur?'selected':''}>${m}</option>`).join('');
+  }
+
+  // Stats
+  let filtrados = [...boletos];
+  if(mesKey) filtrados = filtrados.filter(b=>b.venc&&b.venc.startsWith(mesKey));
+  
+  const pagos     = filtrados.filter(b=>statusBoleto(b)==='pago');
+  const pendentes = filtrados.filter(b=>statusBoleto(b)==='pendente');
+  const atrasados = filtrados.filter(b=>statusBoleto(b)==='atrasado');
+  const totalPago    = pagos.reduce((s,b)=>s+Number(b.valor),0);
+  const totalPend    = pendentes.reduce((s,b)=>s+Number(b.valor),0);
+  const totalAtras   = atrasados.reduce((s,b)=>s+Number(b.valor),0);
+
+  // KPI cards
+  document.getElementById('boletos-cards').innerHTML = `
+    <div class="kcard kcard-green"><div class="kcard-label">✅ Pagos</div><div class="kcard-value" style="color:var(--p-green)">${fmt(totalPago)}</div><div class="kcard-sub">${pagos.length} boleto${pagos.length!==1?'s':''}</div></div>
+    <div class="kcard kcard-warn"><div class="kcard-label">⏳ Pendentes</div><div class="kcard-value" style="color:var(--warn)">${fmt(totalPend)}</div><div class="kcard-sub">${pendentes.length} boleto${pendentes.length!==1?'s':''}</div></div>
+    <div class="kcard kcard-red"><div class="kcard-label">🔴 Atrasados</div><div class="kcard-value" style="color:var(--danger)">${fmt(totalAtras)}</div><div class="kcard-sub">${atrasados.length} boleto${atrasados.length!==1?'s':''}</div></div>
+    <div class="kcard kcard-blue"><div class="kcard-label">Total a pagar</div><div class="kcard-value" style="color:var(--p-blue)">${fmt(totalPend+totalAtras)}</div><div class="kcard-sub">Pendente + Atrasado</div></div>
+  `;
+
+  // Donut chart
+  destroyChart('boletosStatus');
+  const ctxB = document.getElementById('chart-boletos-status');
+  if(ctxB) {
+    charts['boletosStatus'] = new Chart(ctxB, {
+      type: 'doughnut',
+      data: {
+        labels: ['✅ Pagos','⏳ Pendentes','🔴 Atrasados'],
+        datasets: [{
+          data: [pagos.length||0, pendentes.length||0, atrasados.length||0],
+          backgroundColor: ['#4ecb8d','#e08c3a','#e05555'],
+          borderWidth: 0, hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false, cutout:'65%',
+        plugins:{ legend:{ position:'bottom', labels:{ color:'#9896a0', font:{size:11}, boxWidth:10 } } }
+      }
+    });
+  }
+
+  // Próximos vencimentos (7 dias)
+  const em7dias = new Date(); em7dias.setDate(em7dias.getDate()+7);
+  const proximos = boletos.filter(b=>statusBoleto(b)==='pendente'&&b.venc).sort((a,b)=>a.venc>b.venc?1:-1).filter(b=>{
+    const v=new Date(b.venc); return v>=hoje && v<=em7dias;
+  });
+  const proxEl = document.getElementById('boletos-proximos');
+  if(proxEl) {
+    if(!proximos.length) {
+      proxEl.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0">Sem vencimentos nos próximos 7 dias 👍</div>';
+    } else {
+      proxEl.innerHTML = proximos.map(b=>{
+        const v=new Date(b.venc); v.setHours(0,0,0,0);
+        const diff=Math.ceil((v-hoje)/864e5);
+        const lbl=diff===0?'Hoje':diff===1?'Amanhã':'Em '+diff+' dias';
+        const cor=diff<=1?'var(--danger)':diff<=3?'var(--warn)':'var(--e-gold)';
+        const idx=d.boletos.indexOf(b);
+        return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.desc}</div>
+            <div style="font-size:11px;color:var(--text3)">${fmtD(b.venc)} · <span style="color:${cor};font-weight:600">${lbl}</span></div>
+          </div>
+          <div style="font-size:13px;font-weight:600;color:var(--warn)">${fmt(b.valor)}</div>
+          <button onclick="marcarPago(${idx})" style="background:rgba(78,203,141,0.15);border:1px solid rgba(78,203,141,0.3);color:var(--p-green);border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer;white-space:nowrap">✓ Pagar</button>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  // Lista principal filtrada
+  let lista = [...filtrados];
+  if(boletoFilter==='pago')     lista=lista.filter(b=>statusBoleto(b)==='pago');
+  else if(boletoFilter==='pendente')  lista=lista.filter(b=>statusBoleto(b)==='pendente');
+  else if(boletoFilter==='atrasado')  lista=lista.filter(b=>statusBoleto(b)==='atrasado');
+  lista.sort((a,b)=>(a.venc||'')>(b.venc||'')?1:-1);
+
+  const listaEl = document.getElementById('lista-boletos');
+  if(!listaEl) return;
+  if(!lista.length) {
+    listaEl.innerHTML='<div class="empty" style="padding:40px"><div class="empty-ico">📄</div><div style="font-size:13px">Nenhum boleto encontrado</div></div>';
+    return;
+  }
+
+  listaEl.innerHTML = lista.map(b=>{
+    const idx = d.boletos.indexOf(b);
+    const st  = statusBoleto(b);
+    const stIcon = st==='pago'?'✅':st==='atrasado'?'🔴':'⏳';
+    const stCor  = st==='pago'?'var(--p-green)':st==='atrasado'?'var(--danger)':'var(--warn)';
+    const stLabel= st==='pago'?'Pago':st==='atrasado'?'Atrasado':'Pendente';
+    const bgRow  = st==='atrasado'?'rgba(224,85,85,0.04)':st==='pago'?'rgba(78,203,141,0.03)':'transparent';
+    return `<div style="display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);background:${bgRow};transition:background 0.15s">
+      <div style="font-size:20px;width:28px;text-align:center">${stIcon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500">${b.desc}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${badge(b.cat||'Outros')} · Vence ${b.venc?fmtD(b.venc):'—'} · ${b.conta||'—'}</div>
+        ${b.obs?`<div style="font-size:11px;color:var(--text3);margin-top:2px">${b.obs}</div>`:''}
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:14px;font-weight:600;color:${st==='pago'?'var(--p-green)':'var(--danger)'}">${fmt(b.valor)}</div>
+        <div style="font-size:11px;color:${stCor};font-weight:500">${stLabel}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-left:8px">
+        ${st!=='pago'?`<button onclick="marcarPago(${idx})" style="background:rgba(78,203,141,0.15);border:1px solid rgba(78,203,141,0.3);color:var(--p-green);border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer">✓ Pagar</button>`:''}
+        ${st==='pago'?`<button onclick="marcarPendente(${idx})" style="background:rgba(224,140,58,0.12);border:1px solid rgba(224,140,58,0.3);color:var(--warn);border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer">↩ Desfazer</button>`:''}
+        <button onclick="delBoleto(${idx})" style="background:rgba(224,85,85,0.1);border:1px solid rgba(224,85,85,0.2);color:var(--danger);border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function marcarPago(idx) {
+  const b = D().boletos[idx]; if(!b) return;
+  b.status='pago'; b.pagoEm=today();
+  save(); renderBoletos(); updateBadges();
+  // Se tiver home aberto, atualiza alertas também
+  if(currentPage==='home') renderHome();
+}
+
+function marcarPendente(idx) {
+  const b = D().boletos[idx]; if(!b) return;
+  b.status='pendente'; delete b.pagoEm;
+  save(); renderBoletos(); updateBadges();
+}
+
+function delBoleto(idx) {
+  if(!confirm('Remover boleto?')) return;
+  D().boletos.splice(idx,1);
+  save(); renderBoletos(); updateBadges();
+}
+
+function saveBoleto() {
+  const desc  = document.getElementById('b-desc').value.trim();
+  const valor = parseFloat(document.getElementById('b-valor').value);
+  if(!desc||!valor){ alert('Preencha descrição e valor.'); return; }
+  const b = {
+    id:     Date.now(),
+    desc,
+    valor,
+    venc:   document.getElementById('b-venc').value,
+    cat:    document.getElementById('b-cat').value,
+    conta:  document.getElementById('b-conta').value,
+    recorr: document.getElementById('b-recorr').value,
+    status: document.getElementById('b-status').value,
+    obs:    document.getElementById('b-obs').value,
+  };
+  D().boletos.push(b);
+  save(); closeModal('modal-boleto'); renderBoletos(); updateBadges();
+  if(currentPage==='home') renderHome();
+}
+
 /* ============================================================
    TETO COMPRAS
    ============================================================ */
@@ -2107,6 +2832,17 @@ function saveTeto(){
     const el=document.getElementById('teto_'+k);if(el)d.tetoCompras[cats[i]]=Number(el.value)||0;
   });
   save();closeModal('modal-teto');if(currentPage==='home')renderGauge();
+  supabasePush();
+}
+
+function saveLimiteParc(){
+  const val=parseFloat(document.getElementById('limite-parc-input').value)||0;
+  D().limiteParcelasRenda=val;
+  save();
+  closeModal('modal-limite-parc');
+  renderEmprestimos();
+  if(currentPage==='home') renderHome();
+  supabasePush();
 }
 
 /* ============================================================
@@ -2149,6 +2885,10 @@ function saveEmp(){
   const desc=document.getElementById('e-desc').value.trim();const val=parseFloat(document.getElementById('e-val').value);
   if(!desc||!val){alert('Preencha descrição e valor.');return;}
   D().emprestimos.push({id:Date.now(),desc,val,parc:parseFloat(document.getElementById('e-parc').value)||0,juros:parseFloat(document.getElementById('e-juros').value)||0,nparc:parseInt(document.getElementById('e-nparc').value)||1,atual:parseInt(document.getElementById('e-atual').value)||1,banco:document.getElementById('e-banco').value,dia:parseInt(document.getElementById('e-dia').value)||10});
+  // Limite de parcelas check
+  const totalP=D().emprestimos.reduce((s,e)=>s+Number(e.parc||e.parcela||0),0);
+  const limP=Number(D().limiteParcelasRenda||0);
+  if(limP&&totalP>=limP*0.9) setTimeout(()=>alert(`⚠ Atenção! As parcelas mensais PJ atingiram ${Math.round(totalP/limP*100)}% do limite configurado (${fmt(limP)}).`),300);
   save();closeModal('modal-emp');renderEmprestimos();
 }
 
@@ -2181,7 +2921,33 @@ function openModal(id){
     const fns=(d.fornecedores||[]).map(f=>f.nome);
     document.getElementById('cp-forn').innerHTML=(fns.length?fns:['Sem fornecedor']).map(f=>`<option>${f}</option>`).join('');
   }
+  if(id==='modal-boleto'){
+    document.getElementById('b-venc').value=today();
+    document.getElementById('b-status').value='pendente';
+    document.getElementById('b-recorr').value='nao';
+    document.getElementById('b-desc').value='';
+    document.getElementById('b-valor').value='';
+    document.getElementById('b-obs').value='';
+    const d=D();
+    document.getElementById('b-conta').innerHTML=d.contas.map(c=>`<option>${c}</option>`).join('');
+  }
   if(id==='modal-teto') buildTetoForm();
+  if(id==='modal-limite-parc'){
+    const lim=Number(D().limiteParcelasRenda||0);
+    document.getElementById('limite-parc-input').value=lim||'';
+    const emps=D().emprestimos||[];
+    const totalP=emps.reduce((s,e)=>s+Number(e.parc||e.parcela||0),0);
+    const prev=document.getElementById('limite-parc-preview');
+    if(totalP>0){
+      prev.style.display='block';
+      const pct=lim?Math.round(totalP/lim*100):null;
+      prev.innerHTML=`💰 Parcelas atuais: <strong style="color:var(--warn)">${fmt(totalP)}/mês</strong>`
+        +(lim?` &nbsp;·&nbsp; ${pct}% do limite definido`:'')
+        +'<br>📌 Sugestão: se seu faturamento é <strong>R$ X</strong>, um limite saudável seria <strong>R$ X × 30%</strong>';
+    } else {
+      prev.style.display='none';
+    }
+  }
   document.getElementById(id).classList.remove('hidden');
 }
 function closeModal(id){document.getElementById(id).classList.add('hidden');}
@@ -2198,6 +2964,27 @@ function updateBadges(){
   });
   const el=document.getElementById('badge-lanc');
   if(el){ el.textContent=cnt; el.classList.toggle('hidden',cnt===0); }
+
+  // Boletos badge — atrasados + vencem hoje/amanhã
+  const hoje=new Date(); hoje.setHours(0,0,0,0);
+  const amanha=new Date(hoje); amanha.setDate(amanha.getDate()+1);
+  const boletosCrit=(d.boletos||[]).filter(b=>{
+    if(b.status==='pago') return false;
+    if(!b.venc) return false;
+    const v=new Date(b.venc); v.setHours(0,0,0,0);
+    return v<=amanha;
+  }).length;
+  const bb=document.getElementById('badge-boletos');
+  if(bb){ bb.textContent=boletosCrit; bb.classList.toggle('hidden',boletosCrit===0); }
+
+  // Dívidas cartão críticas
+  const divCrit=(d.dividasCartao||[]).filter(dv=>{
+    if(dv.status==='pago') return false;
+    const st=statusDivida(dv);
+    return st==='atrasado'||st==='vencendo';
+  }).length;
+  // (used in home card badge inline)
+
   // Fiado badge — count inadimplentes
   const clientes = d.clientes||[];
   let inadimpl=0;
@@ -2445,7 +3232,11 @@ async function supabasePull() {
     }
     const remote = JSON.parse(rows[0].data);
     if(remote && remote.pessoal && remote.empresa) {
+      const localTetoCompras = db.empresa && db.empresa.tetoCompras && Object.keys(db.empresa.tetoCompras).length ? db.empresa.tetoCompras : null;
+      const localLimiteParc  = db.empresa && db.empresa.limiteParcelasRenda ? db.empresa.limiteParcelasRenda : null;
       db = remote;
+      if(localTetoCompras && (!db.empresa.tetoCompras || !Object.keys(db.empresa.tetoCompras).length)) db.empresa.tetoCompras = localTetoCompras;
+      if(localLimiteParc  && !db.empresa.limiteParcelasRenda) db.empresa.limiteParcelasRenda = localLimiteParc;
       db._cloudLastSync = rows[0].updated_at || new Date().toISOString();
       localStorage.setItem(STORE_KEY, JSON.stringify(db));
       currentMode = db.mode || 'pessoal';
@@ -3424,8 +4215,12 @@ document.addEventListener('DOMContentLoaded',()=>{
       if(!rows || !rows.length || !rows[0].data) { setSyncStatus('yellow','Pronto'); return; }
       const remote = JSON.parse(rows[0].data);
       if(remote && remote.pessoal && remote.empresa) {
-        // Sempre aplica os dados da nuvem — nuvem é a fonte da verdade
+        // Preserva configs locais se a nuvem não as tiver
+        const localTetoCompras = db.empresa && db.empresa.tetoCompras && Object.keys(db.empresa.tetoCompras).length ? db.empresa.tetoCompras : null;
+        const localLimiteParc  = db.empresa && db.empresa.limiteParcelasRenda ? db.empresa.limiteParcelasRenda : null;
         db = remote;
+        if(localTetoCompras && (!db.empresa.tetoCompras || !Object.keys(db.empresa.tetoCompras).length)) db.empresa.tetoCompras = localTetoCompras;
+        if(localLimiteParc  && !db.empresa.limiteParcelasRenda) db.empresa.limiteParcelasRenda = localLimiteParc;
         db._cloudLastSync = rows[0].updated_at || remote._cloudLastSync;
         localStorage.setItem(STORE_KEY, JSON.stringify(db));
         currentMode = db.mode || 'pessoal';
