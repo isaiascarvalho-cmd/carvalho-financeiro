@@ -3412,7 +3412,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   setMode(currentMode);
 
-  // Auto-sync pull from Supabase on load — sempre puxa da nuvem
+  // Auto-sync — SEMPRE puxa da nuvem ao abrir, sem comparar timestamps
   setTimeout(async()=>{
     setSyncStatus('yellow','Sincronizando...');
     try {
@@ -3424,22 +3424,14 @@ document.addEventListener('DOMContentLoaded',()=>{
       if(!rows || !rows.length || !rows[0].data) { setSyncStatus('yellow','Pronto'); return; }
       const remote = JSON.parse(rows[0].data);
       if(remote && remote.pessoal && remote.empresa) {
-        const remoteTime = new Date(remote._cloudLastSync||0).getTime();
-        const localTime  = new Date(db._cloudLastSync||0).getTime();
-        // Sempre atualiza se remoto for mais novo OU se não há dados locais reais
-        const semDadosLocais = !db._cloudLastSync || db.pessoal.lancamentos.length === 0;
-        if(semDadosLocais || remoteTime > localTime + 5000) {
-          db = remote;
-          db._cloudLastSync = rows[0].updated_at || remote._cloudLastSync;
-          localStorage.setItem(STORE_KEY, JSON.stringify(db));
-          // Reinicia o modo e a página com os novos dados
-          currentMode = db.mode || 'pessoal';
-          setMode(currentMode);
-          renderPage(currentPage);
-          setSyncStatus('green','✓ Dados carregados da nuvem');
-        } else {
-          setSyncStatus('green','✓ Sincronizado');
-        }
+        // Sempre aplica os dados da nuvem — nuvem é a fonte da verdade
+        db = remote;
+        db._cloudLastSync = rows[0].updated_at || remote._cloudLastSync;
+        localStorage.setItem(STORE_KEY, JSON.stringify(db));
+        currentMode = db.mode || 'pessoal';
+        setMode(currentMode);
+        renderPage(currentPage);
+        setSyncStatus('green','✓ Sincronizado');
       }
     } catch(e) { setSyncStatus('yellow','Sem conexão'); }
   }, 1500);
